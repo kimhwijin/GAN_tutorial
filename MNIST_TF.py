@@ -35,5 +35,24 @@ print(X_test.shape[0],'test samples')
 Y_train = tf.keras.utils.to_categorical(Y_train, NB_CLASSES)
 Y_test = tf.keras.utils.to_categorical(Y_test,NB_CLASSES)
 
+print(Y_train.shape[0],'train label samples')
+print(Y_test.shape[0],'test label samples')
+
+#sequential , dense model
+model = tf.keras.models.Sequential()
+model.add(tf.keras.layers.Dense(NB_CLASSES,input_shape=(RESHAPED,),name='dense_layer',activation='softmax'))
+
+#모델 컴파일
+model.compile(optimizer='SGD',loss='categorical_crossentropy',metrics=['accuracy'])
+
+#모델 훈련
+model.fit(X_train,Y_train,batch_size=BATCH_SIZE,epochs=EPOCHS,verbose=VERBOSE,validation_split=VALIDATION_SPLIT)
+
+#모델 평가
+test_loss , test_accuracy = model.evaluate(X_test,Y_test)
+print('TEST accuracy: ', test_accuracy)
+
+
+print("finish")
 
 
