@@ -10,6 +10,9 @@ NB_CLASSES = 10 #출력 개수 = 숫자의 개수
 N_HIDDEN = 128 #히든 레이어 매개변수 개수
 VALIDATION_SPLIT = 0.2 #검증을 위해 학습에 제외되는 훈련 데이터 비율
 
+#drop out
+DROPOUT = 0.3
+
 #MNIST 데이터셋
 # 훈련과 테스트를 60000, 10000 으로 나눈다.
 # 레이블에 대한 원핫 인코딩은 자동으로 적용된다.
@@ -32,6 +35,7 @@ print(X_train.shape[0],'train samples')
 print(X_test.shape[0],'test samples')
 
 #레이블을 원핫 인코딩
+#to_categorical : Y_train을 NB_ClASSES 열 개수 만큼, 확장한 행렬을 반환한다.
 Y_train = tf.keras.utils.to_categorical(Y_train, NB_CLASSES)
 Y_test = tf.keras.utils.to_categorical(Y_test,NB_CLASSES)
 
@@ -40,7 +44,18 @@ print(Y_test.shape[0],'test label samples')
 
 #sequential , dense model
 model = tf.keras.models.Sequential()
-model.add(tf.keras.layers.Dense(NB_CLASSES,input_shape=(RESHAPED,),name='dense_layer',activation='softmax'))
+
+#input layer
+model.add(tf.keras.layers.Dense(N_HIDDEN,input_shape=(RESHAPED,), name='dense_layer', activation='relu'))
+#hidden layer
+model.add(tf.keras.layers.Dropout(DROPOUT))
+model.add(tf.keras.layers.Dense(N_HIDDEN,name='dense_layer2', activation='relu'))
+model.add(tf.keras.layers.Dense(DROPOUT))
+#output layer
+model.add(tf.keras.layers.Dense(NB_CLASSES,name='dense_layer3', activation='softmax'))
+
+#모델 요약
+model.summary()
 
 #모델 컴파일
 model.compile(optimizer='SGD',loss='categorical_crossentropy',metrics=['accuracy'])
